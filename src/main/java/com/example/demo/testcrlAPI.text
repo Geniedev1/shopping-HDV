@@ -1,0 +1,20 @@
+curl.exe -X POST http://localhost:8080/users `
+-H "Content-Type: application/json" `
+-d '{
+  "name": "admin1",
+  "email": "admin1223@g.c",
+  "role": "Admin",
+  "id": 2,
+  "createdAt": "22/07/2004"
+}'
+User :
+curl.exe -X POST http://localhost:8080/users  -H "Content-Type: application/json" -d "{\"name\":\"admin1\",\"email\":\"admin1223@g.c\",\"role\":\"Admin\",\"status\":\"PENDING\",\"id\":2,\"createdAt\":\"22/07/2004\"}"
+curl.exe -X POST http://localhost:8080/users/2/activate
+Product :
+curl.exe -X POST http://localhost:8080/addproduct -H "Content-Type: application/json" -d "{\"id\":\"2\",\"name\": \"cansino\",\"price\": 20.000}"
+curl.exe -X GET http://localhost:8080/getAllProduct -H "Content-Type: application/json" -d "{}"
+curl.exe -X POST http://localhost:8080/addproduct -H "Content-Type: application/json" -d "{\"id\":\"1\",\"name\": \"Paper\",\"price\": 50.000}"
+Order :
+curl.exe -X POST http://localhost:8080/order -H "Content-Type: application/json" -d "{\"userId\": 2,\"products\": [{ \"productId\": \"2\", \"quantity\": 50 }]}"
+exception :
+curl.exe -X POST http://localhost:8080/users  -H "Content-Type: application/json" -d "{\"email\":\"admin1223@g.c\",\"role\":\"Admin\",\"status\":\"PENDING\",\"id\":2,\"createdAt\":\"22/07/2004\"}"
