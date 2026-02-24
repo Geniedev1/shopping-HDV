@@ -6,7 +6,6 @@ import com.example.demo.model.Role;
 import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.service.contract.UserService;
-import com.example.demo.service.contract.FirstOrderService;
 import com.example.demo.service.contract.validateentity.CheckerUser;
 import java.util.List;
 
@@ -24,13 +23,11 @@ import com.example.demo.exception.MailalreadySetException;
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private CheckerUser checkerUser;
-    private FirstOrderService firstOrderService;
     private PasswordEncoder paswordEncoder ;
 
-    public UserServiceImpl(UserRepository userRepository, CheckerUser checkerUser, FirstOrderService firstOrderService, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, CheckerUser checkerUser, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;   
         this.checkerUser = checkerUser;
-        this.firstOrderService = firstOrderService;
         this.paswordEncoder = passwordEncoder;
     }
     @Override
@@ -43,7 +40,6 @@ public class UserServiceImpl implements UserService {
         user.setRole(Role.USER);
         user.setPassword(paswordEncoder.encode(user.getPassword()));
         User usersave = userRepository.save(user);
-        firstOrderService.firstOrder(usersave);
         return;
     }   
     @Override

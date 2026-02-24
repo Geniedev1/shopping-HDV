@@ -10,6 +10,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import java.util.List;
 @Component
 public class JwtUtil {
 
@@ -25,13 +28,20 @@ public class JwtUtil {
 
     //  TẠO TOKEN
     public String generateToken(UserDetails userDetails) {
-        return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSignKey(), SignatureAlgorithm.HS256)
-                .compact();
-    }
+
+    List<String> roles = userDetails.getAuthorities()
+            .stream()
+            .map(GrantedAuthority::getAuthority)
+            .toList();
+
+    return Jwts.builder()
+            .setSubject(userDetails.getUsername())
+            .claim("roles", roles)  
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + expiration))
+            .signWith(getSignKey(), SignatureAlgorithm.HS256)
+            .compact();
+}
 
     //  LẤY USERNAME
     public String getUsername(String token) {
