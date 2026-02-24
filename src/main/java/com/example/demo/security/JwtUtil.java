@@ -11,7 +11,6 @@ import java.security.Key;
 import java.util.Date;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import java.util.List;
 @Component
 public class JwtUtil {
