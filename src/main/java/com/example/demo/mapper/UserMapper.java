@@ -55,6 +55,7 @@ public static AuthResponse toAuthResponse(String token,  UserDetailsimpl userDet
         authResponse.setUsername(userDetails.getUsername());
         authResponse.setUserId(userDetails.getId());
         authResponse.setRole(Role.valueOf(userDetails.getAuthorities().iterator().next().getAuthority().substring(5)));
+        authResponse.setEmail(userDetails.getUsername());
         authResponse.setUserStatus(userDetails.getStatus());
         return authResponse;
     }
