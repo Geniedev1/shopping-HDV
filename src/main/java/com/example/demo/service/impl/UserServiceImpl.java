@@ -18,13 +18,14 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.service.contract.UserService;
 @Service
 public class UserServiceImpl implements UserService {
-    private UserRepository userRepository;
-    private PasswordEncoder paswordEncoder ;
+    private final UserRepository userRepository;
+    private final PasswordEncoder paswordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;   
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder ) {
+        this.userRepository = userRepository;
         this.paswordEncoder = passwordEncoder;
     }
+
     @Override
     public void registerUser(AuthRequest authRequest) {        
         if(userRepository.existsByEmail(authRequest.getEmail())) {
@@ -78,6 +79,7 @@ public class UserServiceImpl implements UserService {
         orElseThrow(() -> new UserNotFoundException("User with id: " + userId + " not found."));
         user.activate();
         userRepository.save(user);
+
     }
     @Override
     public UserDTO getUser(Long id) {
