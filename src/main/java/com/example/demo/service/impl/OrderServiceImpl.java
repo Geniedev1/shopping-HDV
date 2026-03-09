@@ -5,11 +5,11 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.OrderDTO;
 import com.example.demo.dto.ProductDTO;
-import com.example.demo.dto.UserDTO;
 import com.example.demo.exception.OrderNotFoundException;
 import com.example.demo.exception.ProductNotFoundException;
 import com.example.demo.mapper.OrderMapper;
 import com.example.demo.model.Order;
+import com.example.demo.model.OrderStatus;
 import com.example.demo.model.Product;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.ProductRepository;
@@ -23,15 +23,6 @@ public class OrderServiceImpl implements OrderService {
         this.productRepository = productRepository;
 
   }
-    @Override
-  public OrderDTO placeOrder(OrderDTO orderDTO , UserDTO userDTO) {
-    //   log.debug("Placing order for user: " + userId + " with products: " + productQuantities);
-        
-        Order order = OrderMapper.toEntity(orderDTO);
-        order.setUserId(userDTO.getId());
-        orderRepository.save(order);    
-        return OrderMapper.toDTO(order);
-  } 
   @Override
   public void cancelOrder(Long orderId) {
 //   log.debug("Cancelling order with ID: " + orderId);
@@ -62,6 +53,20 @@ public class OrderServiceImpl implements OrderService {
         order.addItem(product, quantity);
         orderRepository.save(order);
         return OrderMapper.toDTO(order);
+    }
+@Override
+    public OrderDTO checkout(Long orderId, Long userId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order with ID: " + orderId + " not found."));
+        order.setStatus(OrderStatus.PAID);
+        orderRepository.save(order);    
+        return OrderMapper.toDTO(order);
+    }
+    @Override
+    public void initOrder(Long userId) {
+        Order order = new Order();
+        order.setUserId(userId);
+        orderRepository.save(order);
     }
 
 }

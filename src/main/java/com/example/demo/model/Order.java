@@ -35,7 +35,6 @@ public class Order {
     private String email;
     @Column
     private OrderStatus status;
-
     public void addOrderItems(OrderItem orderItem) {
         this.orderItems.add(orderItem);
     }
