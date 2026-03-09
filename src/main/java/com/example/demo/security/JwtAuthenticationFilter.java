@@ -1,18 +1,16 @@
 package com.example.demo.security;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.example.demo.security.JwtUtil;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.example.demo.security.UserDetailsimpl;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
@@ -37,9 +35,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
-            UserDetails userDetails = userDetailsService.loadUserByUsername(
-                    jwtUtil.getUsername(token)
-            );
+            Long id = jwtUtil.getUserIdFromToken(token);
+            String username = jwtUtil.getUsernameFromToken(token);
+            String status = jwtUtil.getStatusFromToken(token);
+            
+            // Convert status string to UserStatus enum
+            com.example.demo.model.UserStatus userStatus = com.example.demo.model.UserStatus.valueOf(status);
+            
+            var authorities = jwtUtil.getAuthoritiesFromToken(token);
+            UserDetails userDetails = new UserDetailsimpl(id, username, userStatus, authorities);
             System.out.println("Authenticated user: " + userDetails);
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(

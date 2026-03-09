@@ -1,23 +1,22 @@
 package com.example.demo.security;
 import java.util.Collection;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import java.util.List;
-import com.example.demo.model.UserStatus;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import com.example.demo.model.UserStatus;
 
 public class UserDetailsimpl implements UserDetails {
      private static final Logger log =
             LoggerFactory.getLogger(UserDetailsimpl.class);
    private Long id;
-    private String password;
     private String username;
     private UserStatus status;
     private Collection<? extends GrantedAuthority> authorities;
-    public UserDetailsimpl(Long id,  String password, String username, UserStatus status, Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsimpl(Long id, String username, UserStatus status, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
-        this.password = password;
         this.username = username;
         this.status = status;
         this.authorities = authorities;
@@ -29,7 +28,7 @@ public class UserDetailsimpl implements UserDetails {
     }
     @Override
     public String getPassword() {
-        return password;
+        return null; //  Không lưu mật khẩu trong JWT, nên trả về null
     }
     @Override
     public String getUsername() {
@@ -65,7 +64,6 @@ public class UserDetailsimpl implements UserDetails {
     public String toString() {
         return "UserDetailsimpl{" +
                 "id=" + id +
-                ", password='" + password + '\'' +
                 ", username='" + username + '\'' +
                 ", status=" + status +
                 ", authorities=" + authorities +
