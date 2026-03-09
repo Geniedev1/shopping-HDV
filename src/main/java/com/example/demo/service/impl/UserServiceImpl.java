@@ -1,33 +1,28 @@
 package com.example.demo.service.impl;
-import com.example.demo.model.User;
-import com.example.demo.model.UserStatus;
-import com.example.demo.repository.UserRepository;
-import com.example.demo.model.Role;
-import com.example.demo.exception.UserNotFoundException;
-import com.example.demo.mapper.UserMapper;
-import com.example.demo.service.contract.UserService;
-import com.example.demo.service.contract.validateentity.CheckerUser;
 import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import com.example.demo.dto.AdminCreateUserRequest;
 import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.UserDTO;
-import com.example.demo.exception.UserAlreadyException;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import com.example.demo.exception.MailalreadySetException;
+import com.example.demo.exception.UserAlreadyException;
+import com.example.demo.exception.UserNotFoundException;
+import com.example.demo.mapper.UserMapper;
+import com.example.demo.model.Role;
+import com.example.demo.model.User;
+import com.example.demo.model.UserStatus;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.service.contract.UserService;
 @Service
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
-    private CheckerUser checkerUser;
     private PasswordEncoder paswordEncoder ;
 
-    public UserServiceImpl(UserRepository userRepository, CheckerUser checkerUser, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;   
-        this.checkerUser = checkerUser;
         this.paswordEncoder = passwordEncoder;
     }
     @Override
@@ -79,12 +74,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public void activateUser(Long userId)
     {
-       checkerUser.CheckCanOrder(userId);
         User user = userRepository.findById(userId).
         orElseThrow(() -> new UserNotFoundException("User with id: " + userId + " not found."));
         user.activate();
         userRepository.save(user);
     }
-
+    @Override
+    public UserDTO getUser(Long id) {
+        User user = userRepository.findById(id).
+        orElseThrow(() -> new UserNotFoundException("User with id: " + id + " not found."));
+        return UserMapper.toDTO(user);
+    }
     
 }

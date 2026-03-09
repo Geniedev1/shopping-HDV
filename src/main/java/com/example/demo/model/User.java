@@ -1,17 +1,13 @@
 package com.example.demo.model;
-import java.util.List;
 import com.example.demo.exception.StatusUserIncorretException;
-import com.example.demo.model.Role;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import com.example.demo.model.UserStatus;
-import jakarta.persistence.Id;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
+import jakarta.persistence.Id;
 
 @Entity
 public  class User {
@@ -25,9 +21,14 @@ public  class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private  UserStatus status;
+    @Column
     private String name;
+    @Column
     private String email;
+    @Column
     private String password;
+    @Column
+    private String address;
     public String getPassword() {
         return password;
     }
@@ -69,6 +70,12 @@ public  class User {
     }
     public void setEmail(String email) {
         this.email = email;
+    }
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
     }
     public User() {
     }
