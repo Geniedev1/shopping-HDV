@@ -1,28 +1,25 @@
 package com.example.demo.model;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.example.demo.exception.OrderOverItemException;
+import com.example.demo.model.OrderStatus;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.CascadeType;
-import java.util.List;
-import com.example.demo.model.Product;
-import org.aspectj.weaver.ast.Or;
-import java.util.ArrayList;
-import com.example.demo.exception.OrderOverItemException;
 @Entity
 @Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
     @OneToMany(
         mappedBy = "order",
         cascade = CascadeType.ALL,
@@ -32,14 +29,21 @@ public class Order {
     public List<OrderItem> getOrderItems() {
         return orderItems;
     }   
+    @Column
+    private String address;
+    @Column
+    private String email;
+    @Column
+    private OrderStatus status;
+
     public void addOrderItems(OrderItem orderItem) {
         this.orderItems.add(orderItem);
     }
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
     public Long getId() {
         return id;
@@ -47,10 +51,29 @@ public class Order {
     public void setId(Long id) {
         this.id = id;
     }
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public OrderStatus getStatus() {
+        return status;
+    }
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
     public Order() {
+        this.status = OrderStatus.PENDING; 
     }   
-    public Order(Long id, User user, List<OrderItem> orderItems) {
-        this.user = user;
+    public Order(Long id, Long userId, List<OrderItem> orderItems) {
+        this.userId = userId;
         this.orderItems = orderItems;
         this.id = id;
     }

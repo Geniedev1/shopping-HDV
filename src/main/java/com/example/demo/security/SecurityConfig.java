@@ -1,9 +1,9 @@
 package com.example.demo.security;
+import java.time.LocalDateTime;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,15 +13,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.demo.dto.ErrorResponse;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDateTime;
+
 import jakarta.servlet.http.HttpServletResponse;
 @Configuration
 @EnableWebSecurity
@@ -29,7 +28,6 @@ import jakarta.servlet.http.HttpServletResponse;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final UserDetailsService userDetailsService;
     private final ObjectMapper objectMapper;
      @Bean
     public AuthenticationManager authenticationManager(
@@ -43,7 +41,6 @@ public SecurityConfig(
         ObjectMapper objectMapper
     ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.userDetailsService = userDetailsService;
         this.objectMapper = objectMapper;
     }
     @Bean
@@ -66,10 +63,7 @@ public SecurityConfig(
                 .anyRequest().authenticated()
 
             )
-
             //  Authentication provider
-            .authenticationProvider(authenticationProvider())
-
             //  JWT Filter
             .addFilterBefore(
                 jwtAuthenticationFilter,
@@ -83,17 +77,6 @@ public SecurityConfig(
             );
 
         return http.build();
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider =
-            new DaoAuthenticationProvider();
-
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
-
-        return provider;
     }
 
     @Bean

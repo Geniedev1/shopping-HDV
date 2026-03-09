@@ -25,29 +25,6 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    //  TẠO TOKEN
-    public String generateToken(UserDetails userDetails) {
-        java.util.Map<String, Object> claims = new java.util.HashMap<>();
-        if (userDetails instanceof UserDetailsimpl) {
-            UserDetailsimpl customUserDetails = (UserDetailsimpl) userDetails;
-            claims.put("id", customUserDetails.getId());
-            claims.put("status", customUserDetails.getStatus().name());
-            claims.put("authorities", userDetails.getAuthorities().stream()
-                    .map(grantedAuthority -> grantedAuthority.getAuthority())
-                    .collect(java.util.stream.Collectors.toList()));
-        }
-        return createToken(claims, userDetails.getUsername());
-    }
-
-    private String createToken(java.util.Map<String, Object> claims, String subject) {
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSignKey(), SignatureAlgorithm.HS256)
-                .compact();
-    }
 
     //  LẤY USERNAME
     public String getUsername(String token) {

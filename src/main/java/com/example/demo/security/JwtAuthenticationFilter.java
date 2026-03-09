@@ -3,7 +3,6 @@ package com.example.demo.security;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -13,10 +12,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final UserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
-    public JwtAuthenticationFilter(UserDetailsService userDetailsService, JwtUtil jwtUtil) {
-        this.userDetailsService = userDetailsService;
+    public JwtAuthenticationFilter( JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
     @Override
@@ -37,13 +34,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             Long id = jwtUtil.getUserIdFromToken(token);
             String username = jwtUtil.getUsernameFromToken(token);
-            String status = jwtUtil.getStatusFromToken(token);
-            
-            // Convert status string to UserStatus enum
-            com.example.demo.model.UserStatus userStatus = com.example.demo.model.UserStatus.valueOf(status);
-            
             var authorities = jwtUtil.getAuthoritiesFromToken(token);
-            UserDetails userDetails = new UserDetailsimpl(id, username, userStatus, authorities);
+            UserDetails userDetails = new UserDetailsimpl(id, username, authorities);
             System.out.println("Authenticated user: " + userDetails);
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(

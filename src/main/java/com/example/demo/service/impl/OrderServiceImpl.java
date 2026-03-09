@@ -1,17 +1,18 @@
 package com.example.demo.service.impl;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.example.demo.dto.OrderDTO;
+import com.example.demo.dto.ProductDTO;
+import com.example.demo.dto.UserDTO;
+import com.example.demo.exception.OrderNotFoundException;
+import com.example.demo.exception.ProductNotFoundException;
+import com.example.demo.mapper.OrderMapper;
 import com.example.demo.model.Order;
+import com.example.demo.model.Product;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.ProductRepository;
-import com.example.demo.exception.OrderNotFoundException;
-import com.example.demo.mapper.OrderMapper;
-import com.example.demo.dto.OrderDTO;
-import java.util.List;
-import org.springframework.stereotype.Service;
-import com.example.demo.dto.UserDTO;
-import com.example.demo.mapper.UserMapper;
-import com.example.demo.dto.ProductDTO;
-import com.example.demo.exception.ProductNotFoundException;
-import com.example.demo.model.Product;
 import com.example.demo.service.contract.OrderService;
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -27,7 +28,7 @@ public class OrderServiceImpl implements OrderService {
     //   log.debug("Placing order for user: " + userId + " with products: " + productQuantities);
         
         Order order = OrderMapper.toEntity(orderDTO);
-        order.setUser(UserMapper.toEntity(userDTO));
+        order.setUserId(userDTO.getId());
         orderRepository.save(order);    
         return OrderMapper.toDTO(order);
   } 

@@ -1,8 +1,4 @@
 package com.example.demo.dto;
-import java.util.Map;
-import com.example.demo.model.User;
-import com.example.demo.model.OrderItem;
-import com.example.demo.model.Product;
 import java.util.List;
 public class OrderDTO {
      private Long id;

@@ -6,19 +6,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.example.demo.model.UserStatus;
-
 public class UserDetailsimpl implements UserDetails {
      private static final Logger log =
             LoggerFactory.getLogger(UserDetailsimpl.class);
    private Long id;
     private String username;
-    private UserStatus status;
     private Collection<? extends GrantedAuthority> authorities;
-    public UserDetailsimpl(Long id, String username, UserStatus status, Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsimpl(Long id, String username, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
-        this.status = status;
         this.authorities = authorities;
 
     }
@@ -40,9 +36,7 @@ public class UserDetailsimpl implements UserDetails {
     }   
     @Override
     public boolean isAccountNonLocked() {
-        System.out.println("User status: " + this.status);
-        log.warn("User status: " + this.status);    
-        return this.status != UserStatus.LOCKED;
+        return true;
     }
     @Override
     public boolean isCredentialsNonExpired() {
@@ -50,22 +44,17 @@ public class UserDetailsimpl implements UserDetails {
     }
     @Override
     public boolean isEnabled() {
-        System.out.println("User status for isEnabled: " + this.status);
-        log.warn("User status for isEnabled: " + this.status);
-        return this.status == UserStatus.ACTIVE;
+        return true;
     }
     public Long getId() {
         return id;
     }
-    public UserStatus getStatus() {
-        return status;
-    }
+   
     @Override
     public String toString() {
         return "UserDetailsimpl{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", status=" + status +
                 ", authorities=" + authorities +
                 '}';
     }
