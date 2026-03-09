@@ -6,4 +6,5 @@ public interface OrderService {
  public void cancelOrder(Long orderId);
  public OrderDTO getOrderDetails(Long orderId);
  public OrderDTO addItem(ProductDTO productDTO, int quantity, Long userId);
+ public void initOrder(Long userId);
 } 

@@ -14,13 +14,17 @@ import com.example.demo.model.Product;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.contract.OrderService;
+import com.example.demo.client.UserClient;
+import com.example.demo.dto.UserDTO;
 @Service
 public class OrderServiceImpl implements OrderService {
     OrderRepository orderRepository;
     ProductRepository productRepository;
-  public OrderServiceImpl(OrderRepository orderRepository,ProductRepository productRepository) {
-      this.orderRepository = orderRepository;  
-        this.productRepository = productRepository;
+    UserClient userClient;
+  public OrderServiceImpl(OrderRepository orderRepository, ProductRepository productRepository, UserClient userClient) {
+      this.orderRepository = orderRepository;
+      this.productRepository = productRepository;
+      this.userClient = userClient;
 
   }
   @Override
@@ -58,6 +62,14 @@ public class OrderServiceImpl implements OrderService {
     public OrderDTO checkout(Long orderId, Long userId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order with ID: " + orderId + " not found."));
+        
+        // Get user info from User Client
+        UserDTO userDTO = userClient.getUserById(userId);
+        if (userDTO != null) {
+            order.setAddress(userDTO.getAddress());
+            order.setEmail(userDTO.getEmail());
+        }
+
         order.setStatus(OrderStatus.PAID);
         orderRepository.save(order);    
         return OrderMapper.toDTO(order);
