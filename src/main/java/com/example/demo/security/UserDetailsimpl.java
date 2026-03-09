@@ -6,12 +6,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class UserDetailsimpl implements UserDetails {
    private Long id;
     private String username;
-    private String status;
     private Collection<? extends GrantedAuthority> authorities;
-    public UserDetailsimpl(Long id, String username, String status, Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsimpl(Long id, String username, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
-        this.status = status;
         this.authorities = authorities;
     }
     @Override
@@ -44,8 +42,5 @@ public class UserDetailsimpl implements UserDetails {
     }
     public Long getId() {
         return id;
-    }
-    public String getStatus() {
-        return status;
     }
 }
