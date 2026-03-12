@@ -1,21 +1,19 @@
 package com.example.demo.controller;
 
-import org.springframework.security.core.Authentication;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import com.example.demo.service.contract.OrderService;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.demo.dto.OrderDTO;
 import com.example.demo.dto.ProductDTO;
-import org.springframework.security.core.userdetails.UserDetails;
 import com.example.demo.security.UserDetailsimpl;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
+import com.example.demo.service.contract.OrderService;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -29,7 +27,18 @@ public class OrderController {
 public OrderDTO order(@RequestBody ProductDTO productDTO,@RequestParam int quantity,@AuthenticationPrincipal UserDetailsimpl userDetails) {
     //TODO: process POST request
    return  orderService.addItem(productDTO, quantity, userDetails.getId());
-    
   }
+@PostMapping("/checkout")
+@ResponseStatus(HttpStatus.OK)
+public String checkout(@RequestParam Long orderId, @AuthenticationPrincipal UserDetailsimpl userDetails) {
+    orderService.checkout(orderId,userDetails.getId());
+    return "Checkout successful";
+}
+@PostMapping("/init")
+@ResponseStatus(HttpStatus.CREATED)
+public String initOrder(@AuthenticationPrincipal UserDetailsimpl userDetails) {
+     orderService.initOrder(userDetails.getId());
+     return "Order initialized";
+ }
 }
 //f

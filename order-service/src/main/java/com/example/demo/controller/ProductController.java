@@ -28,7 +28,6 @@ public class ProductController {
  }
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public List<ProductDTO> getAllProduct() {
         return productService.getAllProducts();
     }

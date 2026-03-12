@@ -56,9 +56,7 @@ public SecurityConfig(
                     "/api/auth/register"
                 ).permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/products/**").hasRole("USER")
                 .anyRequest().authenticated()
-
             )
 
             //  Authentication provider
