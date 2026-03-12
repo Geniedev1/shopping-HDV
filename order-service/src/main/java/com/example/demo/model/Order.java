@@ -90,4 +90,9 @@ public class Order {
     OrderItem orderItem = new OrderItem(this, product, quantity);
     this.orderItems.add(orderItem);
  }
+ @Override
+    public String toString()
+ {
+     return this.address +" " + this.status +" " + this.userId + " " + this.id;
+ }
 }

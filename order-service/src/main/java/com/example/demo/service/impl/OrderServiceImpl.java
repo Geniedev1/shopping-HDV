@@ -52,6 +52,7 @@ public class OrderServiceImpl implements OrderService {
             throw new OrderNotFoundException("Order for User ID: " + userId + " not found.");
         }
         Order order = listorder.get(0);
+        System.out.println(order);
         Product product = productRepository.findById(productDTO.getId()).
         orElseThrow(() -> new ProductNotFoundException("Product with ID: " + productDTO.getId() + " not found."));
         order.addItem(product, quantity);
