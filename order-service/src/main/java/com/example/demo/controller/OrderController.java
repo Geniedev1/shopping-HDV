@@ -19,26 +19,31 @@ import com.example.demo.service.contract.OrderService;
 @RequestMapping("/api/orders")
 public class OrderController {
     OrderService orderService;
+
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
-    }  
-@PostMapping
-@ResponseStatus(HttpStatus.CREATED)
-public OrderDTO order(@RequestBody ProductDTO productDTO,@RequestParam int quantity,@AuthenticationPrincipal UserDetailsimpl userDetails) {
-    //TODO: process POST request
-   return  orderService.addItem(productDTO, quantity, userDetails.getId());
-  }
-@PostMapping("/checkout")
-@ResponseStatus(HttpStatus.OK)
-public String checkout(@RequestParam Long orderId, @AuthenticationPrincipal UserDetailsimpl userDetails) {
-    orderService.checkout(orderId,userDetails.getId());
-    return "Checkout successful";
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrderDTO order(@RequestBody ProductDTO productDTO, @RequestParam int quantity,
+            @AuthenticationPrincipal UserDetailsimpl userDetails) {
+        // TODO: process POST request
+        return orderService.addItem(productDTO, quantity, userDetails.getId());
+    }
+
+    @PostMapping("/checkout")
+    @ResponseStatus(HttpStatus.OK)
+    public String checkout(@AuthenticationPrincipal UserDetailsimpl userDetails) {
+        orderService.checkout(userDetails.getId());
+        return "Checkout successful";
+    }
+
+    @PostMapping("/init")
+    @ResponseStatus(HttpStatus.CREATED)
+    public String initOrder(@AuthenticationPrincipal UserDetailsimpl userDetails) {
+        orderService.initOrder(userDetails.getId());
+        return "Order initialized";
+    }
 }
-@PostMapping("/init")
-@ResponseStatus(HttpStatus.CREATED)
-public String initOrder(@AuthenticationPrincipal UserDetailsimpl userDetails) {
-     orderService.initOrder(userDetails.getId());
-     return "Order initialized";
- }
-}
-//f
+// f

@@ -32,20 +32,19 @@ public class UserClientImpl implements UserClient {
 
                 // Assuming User Service runs on localhost:8080 as per previous context
                 // Adjust URL if it's a different microservice
-                String userServiceUrl = "http://localhost:8080/api/users/" + userId;
-                
+                String userServiceUrl = "http://auth-service:8081/api/users/" + userId;
+
                 try {
                     ResponseEntity<UserDTO> response = restTemplate.exchange(
                             userServiceUrl,
                             HttpMethod.GET,
                             entity,
-                            UserDTO.class
-                    );
+                            UserDTO.class);
                     return response.getBody();
                 } catch (Exception e) {
-                   // Handle exception (log it, return null, or throw custom exception)
-                   e.printStackTrace();
-                   return null;
+                    // Handle exception (log it, return null, or throw custom exception)
+                    e.printStackTrace();
+                    return null;
                 }
             }
         }
