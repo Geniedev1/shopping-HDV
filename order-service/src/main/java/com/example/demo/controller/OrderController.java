@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.CheckoutResponseDTO;
 import com.example.demo.dto.OrderDTO;
 import com.example.demo.dto.ProductDTO;
 import com.example.demo.security.UserDetailsimpl;
@@ -34,9 +35,8 @@ public class OrderController {
 
     @PostMapping("/checkout")
     @ResponseStatus(HttpStatus.OK)
-    public String checkout(@AuthenticationPrincipal UserDetailsimpl userDetails) {
-        orderService.checkout(userDetails.getId());
-        return "Checkout successful";
+    public CheckoutResponseDTO checkout(@AuthenticationPrincipal UserDetailsimpl userDetails) {
+        return orderService.checkout(userDetails.getId());
     }
 
     @PostMapping("/init")

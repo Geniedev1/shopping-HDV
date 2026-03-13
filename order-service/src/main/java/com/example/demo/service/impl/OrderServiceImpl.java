@@ -17,6 +17,8 @@ import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.contract.OrderService;
 import com.example.demo.client.UserClient;
 import com.example.demo.dto.UserDTO;
+import com.example.demo.dto.UserLookupResult;
+import com.example.demo.dto.CheckoutResponseDTO;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -68,7 +70,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDTO checkout(Long userId) {
+    public CheckoutResponseDTO checkout(Long userId) {
         List<Order> listorder = orderRepository.findByUserId(userId);
         if (listorder.isEmpty()) {
             throw new OrderNotFoundException("Order for User ID: " + userId + " not found.");
@@ -77,17 +79,28 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new OrderNotFoundException("Order for User ID: " + userId + " not found."));
 
         // Get user info from User Client
-        UserDTO userDTO = userClient.getUserById(userId);
+        UserLookupResult lookupResult = userClient.getUserById(userId);
+        UserDTO userDTO = lookupResult.getUser();
         if (userDTO != null) {
             order.setAddress(userDTO.getAddress());
             order.setEmail(userDTO.getEmail());
-            System.out.println(userDTO.getAddress());
-            System.out.println(userDTO.getEmail());
+            System.out.println("User Address used: " + userDTO.getAddress());
+            System.out.println("User Email used: " + userDTO.getEmail());
         }
 
         order.setStatus(OrderStatus.PAID);
         orderRepository.save(order);
-        return OrderMapper.toDTO(order);
+
+        CheckoutResponseDTO response = new CheckoutResponseDTO();
+        response.setMessage("Checkout Processed");
+        response.setOrderId(order.getId());
+        response.setOrderStatus(order.getStatus());
+        response.setFallbackUsed(lookupResult.isFallbackUsed());
+        response.setDownstreamStatus(lookupResult.getDownstreamStatus());
+        response.setEmailUsed(order.getEmail());
+        response.setAddressUsed(order.getAddress());
+
+        return response;
     }
 
     @Override

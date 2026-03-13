@@ -10,6 +10,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.example.demo.dto.UserDTO;
+import com.example.demo.dto.UserLookupResult;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 
 @Component
 public class UserClientImpl implements UserClient {
@@ -21,7 +23,8 @@ public class UserClientImpl implements UserClient {
     }
 
     @Override
-    public UserDTO getUserById(Long userId) {
+    @CircuitBreaker(name = "userServiceCB", fallbackMethod = "getUserByIdFallback")
+    public UserLookupResult getUserById(Long userId) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attributes != null) {
             String token = attributes.getRequest().getHeader("Authorization");
@@ -34,20 +37,32 @@ public class UserClientImpl implements UserClient {
                 // Adjust URL if it's a different microservice
                 String userServiceUrl = "http://auth-service:8081/api/users/" + userId;
 
-                try {
-                    ResponseEntity<UserDTO> response = restTemplate.exchange(
-                            userServiceUrl,
-                            HttpMethod.GET,
-                            entity,
-                            UserDTO.class);
-                    return response.getBody();
-                } catch (Exception e) {
-                    // Handle exception (log it, return null, or throw custom exception)
-                    e.printStackTrace();
-                    return null;
-                }
+                ResponseEntity<UserDTO> response = restTemplate.exchange(
+                        userServiceUrl,
+                        HttpMethod.GET,
+                        entity,
+                        UserDTO.class);
+                return new UserLookupResult(response.getBody(), false, "REAL", "Success");
             }
         }
-        return null;
+        return new UserLookupResult(null, false, "NO_TOKEN", "No token provided");
+    }
+
+    public UserLookupResult getUserByIdFallback(Long userId, Throwable throwable) {
+        System.out.println("DEBUG: Fallback triggered for userId " + userId + ". Reason: " + throwable.getMessage());
+        UserDTO fallbackUser = new UserDTO();
+        fallbackUser.setId(userId);
+        fallbackUser.setEmail("fallback-user-" + userId + "@demo.local");
+        fallbackUser.setAddress("FALLBACK_ADDRESS_DOWNSTREAM_UNAVAILABLE");
+
+        String status = "FALLBACK_FAILURE";
+        if (throwable instanceof java.util.concurrent.TimeoutException ||
+            throwable instanceof org.springframework.web.client.ResourceAccessException) {
+            status = "FALLBACK_TIMEOUT";
+        } else if (throwable instanceof io.github.resilience4j.circuitbreaker.CallNotPermittedException) {
+            status = "FALLBACK_CIRCUIT_OPEN";
+        }
+
+        return new UserLookupResult(fallbackUser, true, status, throwable.getMessage());
     }
 }
