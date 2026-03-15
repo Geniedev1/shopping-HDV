@@ -106,9 +106,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void initOrder(Long userId) {
         List<Order> listorder = orderRepository.findByUserId(userId);
-        if (listorder.isEmpty()) {
-            throw new OrderNotFoundException("Order for User ID: " + userId + " not found.");
-        }
+
         for (Order order : listorder) {
             if (order.getStatus() == OrderStatus.PENDING) {
                 throw new OrderNotFoundException("Order for User ID: " + userId + " not found.");
