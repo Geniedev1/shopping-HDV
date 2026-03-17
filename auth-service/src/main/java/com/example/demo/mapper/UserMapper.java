@@ -44,7 +44,6 @@ public class UserMapper {
 public static User AdminCreateUserRequesttoEntity(AdminCreateUserRequest adminCreateUserRequest) {
         User user = new User();
         user.setEmail(adminCreateUserRequest.getEmail());
-        user.setPassword(adminCreateUserRequest.getPassword());
         user.setRole(adminCreateUserRequest.getRole());
         user.setStatus(adminCreateUserRequest.getStatus());
         return user;

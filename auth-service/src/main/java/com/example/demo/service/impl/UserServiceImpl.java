@@ -44,8 +44,8 @@ public class UserServiceImpl implements UserService {
             throw new UserAlreadyException("User with email: " + adminCreateUserRequest.getEmail() + " already exists.");
         }
         User user = UserMapper.AdminCreateUserRequesttoEntity(adminCreateUserRequest);
+        user.setPassword(paswordEncoder.encode(adminCreateUserRequest.getPassword()));
         userRepository.save(user);
-        return;
     }
     @Override
     public List<UserDTO> getAll() {
